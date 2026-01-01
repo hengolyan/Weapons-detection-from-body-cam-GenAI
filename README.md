@@ -20,8 +20,8 @@ To address the lack of labeled body-cam data, we employed a **Hybrid Training St
 
 ## 📂 Dataset
 Our dataset is a hybrid mix of real-world images and synthetically generated samples:
-1.  **Real Data:** Aggregated from multiple open-source datasets (CCTV, Kaggle, Roboflow).
-2.  **Synthetic Data:** 500+ AI-generated images created with specialized prompts to handle lighting and occlusions.
+1.  **Real Data (Current):** 500 real-world images augmented with **Motion Blur** and **Fisheye** effects to simulate body-cam characteristics.
+2.  **Synthetic Data (Planned):** Future expansion will include images where weapons are synthetically added (inpainting) to scenes that originally contained no weapons.
 
 ### Download the Data
 You can access our processed datasets and YOLO-formatted labels directly from Google Drive:
