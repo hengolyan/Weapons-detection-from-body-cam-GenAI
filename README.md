@@ -1,7 +1,7 @@
 # Weapon Detection from Body-Cam using GenAI & YOLOv8
 
 **Authors:** Hen Golyan, Aviv Heller, Afik Suissa  
-**Course:** Generative AI and Computer Vision (Semester A)
+**Course:** Deep Generative Models for Audio-Visual Data (Semester A)
 
 ## 📌 Overview
 This project focuses on detecting weapons in footage from body-worn cameras (body-cams), aiming to improve situational awareness and safety for military and public safety applications. 
