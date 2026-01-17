@@ -3,81 +3,92 @@
 **Authors:** Hen Golyan, Aviv Heller, Afik Suissa  
 **Course:** Deep Generative Models for Audio-Visual Data (Semester A)
 
-## 📌 Overview
-This project focuses on detecting weapons in footage from body-worn cameras (body-cams), aiming to improve situational awareness and safety for military and public safety applications. 
+# Weapon Detection from Body-Cam Footage using GenAI & Synthetic Data
 
-Detecting weapons in body-cam footage presents unique challenges compared to standard CCTV:
-* Strong motion blur and rapid movement.
-* Extreme viewpoint changes and occlusions.
-* Dynamic lighting conditions.
+## 📌 Project Motivation
+In military and public safety sectors, situational awareness is critical. Body-worn cameras are standard equipment, but analyzing hours of footage manually is inefficient. Automated weapon detection can enhance real-time situational awareness and streamline post-event analysis.
 
-To address the lack of labeled body-cam data, we employed a **Hybrid Training Strategy**, combining real-world surveillance images with **Synthetic Data** generated using Generative AI (Diffusion-based inpainting) to simulate diverse scenarios.
+## ❓ Problem Statement
+Developing robust detection models for body-cam footage is challenging due to:
+1.  **Data Scarcity:** High-quality, diverse datasets of firearms in body-cam perspectives are rare or classified.
+2.  **Environmental Challenges:** Body-cam footage suffers from unique distortions such as fisheye lens effects, motion blur, low lighting, and grain/noise.
+3.  **Contextual Complexity:** Standard GenAI models (like Stable Diffusion) often fail to generate weapons accurately in complex or unusual scenes (e.g., surgeries, card games).
 
-## 🚀 Features
-* **Model:** YOLOv8s (Small) optimized for real-time detection.
-* **Data Augmentation:** Custom synthetic dataset generation to expand training variety.
-* **Performance:** ~5.4ms inference speed on T4 GPU.
+## 🖼️ Visual Abstract
+Our approach combines real-world data with a custom synthetic dataset generation pipeline:
+1.  **Data Collection:** Gathering weapon images.
+2.  **Synthetic Generation:** Using Image Compositing to place weapons on diverse backgrounds.
+3.  **Realism Pass:** Applying "Body-Cam" effects (Fisheye, Blur, Noise).
+4.  **Training:** Fine-tuning YOLOv8s on the hybrid dataset.
 
-## 📂 Dataset
-Our dataset is a hybrid mix of real-world images and synthetically generated samples:
-1.  **Real Data (Current):** 500 real-world images augmented with **Motion Blur** and **Fisheye** effects to simulate body-cam characteristics.
-2.  **Synthetic Data (Planned):** Future expansion will include images where weapons are synthetically added (inpainting) to scenes that originally contained no weapons.
+## 📂 Datasets Used & Collected
+Since no adequate dataset existed for our specific needs, we created a custom dataset by combining real-world data with our synthetic generation pipeline.
 
-### Download the Data
-You can access our processed datasets and YOLO-formatted labels directly from Google Drive:
+We utilized and augmented data from the following sources:
+* **Bodycam Dataset (Roboflow):** [Link to Dataset](https://universe.roboflow.com/tochukwu/bodycam/dataset/2)
+* **CS 231n Project Dataset (Roboflow):** [Link to Dataset](https://universe.roboflow.com/dana-q9plh/cs-231n-project/dataset/2#)
 
-| Resource | Link |
-|----------|------|
-| **Synthetic Dataset (Images)** | [Download from Drive](https://drive.google.com/drive/folders/11ynrEJjgT5IehCu0YtkeYvEf9Efu2EL5?usp=sharing) |
-| **YOLO Labels & Configs** | [Download from Drive](https://drive.google.com/drive/folders/1vCNx0u0CHb-hZ8BBQpcHV255kmdzuivy?usp=sharing) |
+## 🛠️ Data Augmentation & Generation Methods
+To tackle data scarcity, we experimented with two generative approaches:
 
-> **Note:** Please ensure you update the `data.yaml` paths in the notebook to point to your local directory structure after downloading.
+### 1. Stable Diffusion (Inpainting)
+Initially, we used Generative AI to inpaint weapons into scenes. However, we found that the model struggled to accurately place weapons in unusual contexts (e.g., operating rooms), resulting in hallucinations and low fidelity.
 
-## 🛠️ Installation & Usage
+### 2. Image Compositing (Selected Method)
+We found **Image Compositing** to be superior for our needs. We manually extracted high-quality weapon images and overlaid them onto various background images.
+To mimic the "Body-Cam look," we applied a **"Realism Pass"**:
+* **Fisheye Distortion:** Simulating wide-angle lenses.
+* **Motion Blur:** Simulating wearer movement.
+* **Noise/Grain:** Simulating low-light sensor noise.
 
-### Prerequisites
-* Python 3.8+
-* PyTorch
-* Ultralytics (YOLOv8)
+This approach ensured high data quality and 100% precise labeling.
 
-### Setup
-1. Clone the repository:
-   ```bash
-   git clone [https://github.com/hengolyan/Weapons-detection-from-body-cam-GenAI.git](https://github.com/hengolyan/Weapons-detection-from-body-cam-GenAI.git)
-   cd Weapons-detection-from-body-cam-GenAI
-   ```
+## 🧠 Models and Pipelines
+* **Architecture:** YOLOv8s (Small)
+* **Reasoning:** Selected for its balance between high accuracy and fast inference speed, suitable for edge devices.
+* **Pipeline:**
+    1.  Input Image (Real or Synthetic).
+    2.  Preprocessing & Resizing.
+    3.  YOLOv8 Inference.
+    4.  Output: Bounding Box + Confidence Score.
 
-2. Install dependencies:
-   ```bash
-   pip install ultralytics torch torchvision opencv-python matplotlib
-   ```
+## ⚙️ Training Process & Parameters
+* **Epochs:** 50
+* **Batch Size:** 16
+* **Optimizer:** SGD / AdamW (Auto)
+* **Hardware:** NVIDIA T4 GPU
+* **Dataset Size:** ~15,600 Images (Real + Synthetic).
 
-3. **Training & Inference:**
-   Open the Jupyter Notebook `bodycam_weapon_detection.ipynb` to run the training pipeline, including data preparation, model training, and evaluation.
+## 📊 Metrics & Results
+We achieved a significant performance boost by switching from pure GenAI augmentation to our Compositing + Fine-tuning strategy.
 
-## 📊 Results (Baseline)
-Initial evaluation on the validation set using YOLOv8s:
+| Metric | Interim Results (Baseline) | **Final Results** |
+| :--- | :--- | :--- |
+| **mAP50** | 53.2% | **97.9%** |
+| **Precision** | 69.2% | **96.2%** |
+| **Recall** | 50.8% | **94.6%** |
+| **Inference Speed** | 5.4 ms | **4.5 ms** |
 
-* **mAP@0.5:** 0.532 (53.2%)
-* **Precision:** 0.692 (69.2%)
-* **Recall:** 0.508 (50.8%)
-* **Inference Speed:** 5.4ms/img (T4 GPU)
+*Table 1: Comparison between initial training and final fine-tuned model.*
 
-*(Further improvements expected with Phase 3 Hybrid Training)*.
+### Confusion Matrix
+Our model shows extremely low false-positive rates (Background incorrectly identified as Gun: 0%).
 
-## 📈 Visualizations
+![Confusion Matrix](results/final/confusion_matrix.png)
 
-### Dataset Analysis
-![Labels Distribution](labels.jpeg)
+## 📷 Input/Output Examples
+The model successfully detects weapons even in unseen images with challenging angles and lighting.
 
-### Training Performance
-![Training Results](results.png)
+![Detection Result](results/final/results.png)
+*(Example: Unseen image from a body-cam perspective successfully detected)*
 
-### Model Evaluation
-![Confusion Matrix](confusion_matrix.png)
-
-### Detection Example
-![Validation Prediction](val_batch1_pred.jpg)
-
-## 📜 License
-This project is for educational and research purposes.
+## 📂 Repository Structure
+```bash
+├── datasets/             # Scripts for downloading/processing data
+├── results/
+│   ├── interim/          # Results from early development stages
+│   └── final/            # Final training metrics, confusion matrix, and plots
+├── weights/              # Best trained model weights (best.pt)
+├── train.py              # Training script
+├── predict.py            # Inference script
+└── README.md             # Project documentation
