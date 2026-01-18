@@ -74,12 +74,12 @@ We achieved a significant performance boost by switching from pure GenAI augment
 ### Confusion Matrix
 Our model shows extremely low false-positive rates (Background incorrectly identified as Gun: 0%).
 
-![Confusion Matrix](results/final/confusion_matrix.png)
+![Confusion Matrix](Visuals/confusion_matrix.png)
 
 ## 📷 Input/Output Examples
 The model successfully detects weapons even in unseen images with challenging angles and lighting.
 
-![Detection Result](results/final/results.png)
+![Detection Result](Visuals/results.png)
 *(Example: Unseen image from a body-cam perspective successfully detected)*
 
 ## 📂 Repository Structure
