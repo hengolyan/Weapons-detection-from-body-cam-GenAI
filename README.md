@@ -27,6 +27,7 @@ Since no adequate dataset existed for our specific needs, we created a custom da
 We utilized and augmented data from the following sources:
 * **Bodycam Dataset (Roboflow):** [Link to Dataset](https://universe.roboflow.com/tochukwu/bodycam/dataset/2)
 * **CS 231n Project Dataset (Roboflow):** [Link to Dataset](https://universe.roboflow.com/dana-q9plh/cs-231n-project/dataset/2#)
+* **Syntethic & Augmented data:** [Link to Dataset](https://drive.google.com/drive/folders/1mOxLCc2QptTAp3o44nBeX-FQUYfLkGB3?usp=sharing) 
 
 ## 🛠️ Data Augmentation & Generation Methods
 To tackle data scarcity, we experimented with two generative approaches:
